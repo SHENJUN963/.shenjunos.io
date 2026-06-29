@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>用户系统 - V1.2026.1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;}
+body{background:linear-gradient(135deg,#007aff,#5ac8fa);padding:12px;min-height:100vh;}
+
+/* 全屏大幅欢迎界面 */
+.welcome{
+  position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;
+  background:linear-gradient(135deg,#007aff,#5ac8fa);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  color:#fff;font-size:28px;font-weight:bold;gap:20px;
+}
+.welcome button{
+  padding:14px 30px;background:#fff;color:#007aff;border:none;border-radius:16px;
+  font-size:16px;font-weight:bold;margin-top:20px;
+}
+
+.box{
+  background:#fff;border-radius:22px;padding:24px;margin-bottom:16px;
+  display:none;animation:fadeIn 0.3s ease forwards;
+}
+.box.show{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.privacy-modal{
+  position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.privacy-box{
+  background:#fff;width:100%;max-width:380px;border-radius:20px;
+  padding:22px;max-height:80vh;overflow-y:auto;
+}
+.privacy-title{font-size:18px;font-weight:bold;margin-bottom:10px;text-align:center;}
+.privacy-content{
+  font-size:14px;line-height:1.7;color:#333;text-align:justify;
+  margin-bottom:18px;
+}
+.privacy-buttons{display:flex;gap:10px;}
+.privacy-buttons button{flex:1;padding:12px;border-radius:12px;border:none;}
+.btn-agree{background:#007aff;color:#fff;}
+.btn-refuse{background:#f2f2f2;color:#666;}
+
+.head{width:100%;text-align:center;margin-bottom:20px;}
+.avatar{
+  width:70px;height:70px;background:#007aff;color:#fff;border-radius:50%;
+  font-size:28px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 10px auto;
+}
+.wifi{
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#007aff;margin-top:4px;gap:6px;
+}
+.wifi-icon{
+  width:14px;height:14px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwN2FmZiI+PHBhdGggZD0iTTEgOWwyLjQ1LTIuNDNNMTEuNTkgMTMuMTZMNS40MSA2Ljk4bC0yLjgyLDIuODJNNjI0bDguMDYtOC4wNm0tMi45MSAyLjkxTDEyLjQyIDEybC01LjcxLTUuN3Ywem0tMi45MSAyLjkxTDE4LjQgNi4ybC04LjA2IDguMDYiLz48L3N2Zz4=");
+  background-size:contain;background-repeat:no-repeat;
+}
+
+input,textarea{
+  width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:12px;
+  margin-bottom:12px;font-size:15px;
+}
+
+button{
+  width:100%;padding:12px;border:none;border-radius:12px;
+  font-size:15px;margin-bottom:10px;cursor:pointer;
+}
+button.btn-normal{background:#007aff;color:#fff;}
+button.btn-second{background:#f8f8f8;color:#333;border:1px solid #ddd;}
+button.btn-danger{background:#ff3b30;color:#fff;}
+
+.text-center{text-align:center;font-size:14px;color:#666;margin-top:8px;line-height:1.6;}
+.link{color:#007aff;cursor:pointer;}
+
+.chat-box{
+  height:350px;overflow-y:auto;background:#f7f8fa;padding:14px;border-radius:12px;
+  margin-bottom:10px;line-height:1.6;white-space:pre-line;
+}
+.info{font-size:14px;line-height:1.8;margin:10px 0;color:#333;}
+</style>
+</head>
+<body>
+
+<!-- 全屏欢迎界面 -->
+<div class="welcome" id="welcomePage">
+  <div>欢迎使用用户系统</div>
+  <div style="font-size:14px">V1.2026.1</div>
+  <button onclick="closeWelcome()">进入</button>
+</div>
+
+<!-- 隐私政策 -->
+<div class="privacy-modal" id="privacyModal" style="display:none">
+  <div class="privacy-box">
+    <div class="privacy-title">用户隐私政策与服务协议</div>
+    <div class="privacy-content">
+<b>一、隐私政策</b><br>
+本平台严格保护用户的个人信息与隐私权，仅在用户主动提供的前提下收集用户名、手机号、密码、安全问题答案等必要信息，用于账号登录、身份验证、账号安全与客服沟通。所有数据仅用于系统正常运行，不会向第三方出售、出租、泄露或用于任何商业广告行为。用户可随时查看个人信息，对不合理收集内容有权提出删除申请。
+<br><br>
+<b>二、信息存储与安全</b><br>
+平台采用云端加密存储，定期维护数据安全，防止信息泄露、丢失、篡改与非法访问。用户账号密码由个人妥善保管，因用户自身原因导致账号被盗、信息泄露，平台不承担责任。
+<br><br>
+<b>三、使用权限说明</b><br>
+用户注册即代表同意平台收集必要信息用于审核、登录、消息通知、客服聊天、账号管理等功能。平台不会获取用户设备隐私、位置信息、通讯录、相册等与服务无关内容。
+<br><br>
+<b>四、用户权利</b><br>
+用户享有账号注销、信息修改、名称更改、密码重置等权利。注销申请提交后进入7天反悔期，期间可撤销注销，逾期自动完成注销，所有信息永久清除。
+<br><br>
+<b>五、协议生效与修改</b><br>
+本协议自用户同意之日起生效，平台有权在合理范围内更新条款，更新后继续使用即视为同意新版协议。
+<br><br>
+<b>六、责任说明</b><br>
+用户需对自身账号行为负责，不得使用违规名称、违法内容、恶意行为干扰系统，否则管理员有权拒绝审核、冻结账号或注销处理。
+<br><br>
+<b>七、客服与沟通</b><br>
+平台提供在线客服聊天功能，用于审核通知、问题解答、账号协助，聊天记录仅用于服务，不对外公开。
+    </div>
+    <div class="privacy-buttons">
+      <button class="btn-refuse" onclick="refusePrivacy()">不同意并退出</button>
+      <button class="btn-agree" onclick="agreePrivacy()">同意并继续</button>
+    </div>
+  </div>
+</div>
+
+<!-- 登录 -->
+<div class="box" id="loginPage">
+  <h1>登录</h1>
+  <input id="loginAccount" placeholder="用户名/手机号">
+  <input id="loginPwd" type="password" placeholder="密码">
+  <button class="btn-normal" onclick="userLogin()">登录</button>
+  <div class="text-center">
+    <span class="link" onclick="showReg()">去注册</span>｜
+    <span class="link" onclick="showForgetPwd()">忘记密码</span>
+  </div>
+  <div class="text-center">
+    <span class="link" onclick="showLoginHelp()">登录帮助</span>
+  </div>
+</div>
+
+<!-- 注册 -->
+<div class="box" id="regPage">
+  <h1>注册</h1>
+  <input id="regName" placeholder="用户名">
+  <input id="regPhone" placeholder="手机号">
+  <input id="regPwd" placeholder="密码">
+  <input id="regQues" placeholder="安全问题">
+  <input id="regAnswer" placeholder="安全答案">
+  <button class="btn-normal" onclick="userReg()">提交注册（待审核）</button>
+  <div class="text-center">
+    <span class="link" onclick="showLogin()">返回登录</span>
+  </div>
+  <div class="text-center">
+    <span class="link" onclick="showRegHelp()">注册帮助</span>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div class="box" id="mainPage">
+  <div class="head">
+    <div class="avatar" id="avatar"></div>
+    <h2 id="nickName"></h2>
+    <div class="wifi">
+      <div class="wifi-icon"></div>
+      <span id="wifiBand">WiFi 在线（5G）</span>
+    </div>
+  </div>
+  <button class="btn-normal" onclick="showUserCenter()">用户中心</button>
+  <button class="btn-normal" onclick="checkUpdate()">检查更新</button>
+  <button class="btn-normal" onclick="showNotice()">公告</button>
+  <button class="btn-normal" onclick="showChat()">联系客服</button>
+  <button class="btn-second" onclick="logout()">退出登录</button>
+</div>
+
+<!-- 用户中心 -->
+<div class="box" id="userCenterPage">
+  <h1>用户中心</h1>
+  <button class="btn-normal" onclick="changeName()">更改名称（需审核）</button>
+  <button class="btn-normal" onclick="showForgetPwd()">忘记密码</button>
+  <button class="btn-normal" onclick="showChat()">联系客服</button>
+  <button class="btn-normal" onclick="showContact()">联系方式</button>
+  <button class="btn-danger" onclick="applyDeleteAccount()">注销账户（7天反悔期）</button>
+  <button class="btn-second" onclick="showMain()">返回主页</button>
+  <p class="text-center">版本号：V1.2026.1</p>
+</div>
+
+<!-- 联系方式 → 电话+邮箱直接显示 -->
+<div class="box" id="contactPage">
+  <h1>联系方式</h1>
+  <div class="info">
+    电话：19956455173<br>
+    邮箱：weenglish1134_shen@qq.com
+  </div>
+  <button class="btn-second" onclick="showUserCenter()">返回</button>
+</div>
+
+<!-- 公告 -->
+<div class="box" id="noticePage">
+  <h1>平台公告</h1>
+  <div id="noticeContent" style="line-height:1.8;font-size:14px;"></div>
+  <button class="btn-second" onclick="showMain()">返回</button>
+</div>
+
+<!-- 联系客服 -->
+<div class="box" id="chatPage">
+  <h1>联系客服</h1>
+  <div class="info">
+    电话：19956455173<br>
+    邮箱：weenglish1134_shen@qq.com
+  </div>
+  <div class="chat-box" id="chatBox"></div>
+  <input id="chatInput" placeholder="输入消息" onkeydown="if(event.key=='Enter')sendChat()">
+  <button class="btn-normal" onclick="sendChat()">发送</button>
+  <button class="btn-second" onclick="showUserCenter()">返回</button>
+</div>
+
+<script>
+function get(k){return JSON.parse(localStorage.getItem("cloud_"+k)||"[]")}
+function set(k,d){localStorage.setItem("cloud_"+k,JSON.stringify(d))}
+function now(){return new Date().toLocaleString()}
+let currentUser = null;
+
+// 欢迎页
+function closeWelcome(){
+  document.getElementById("welcomePage").style.display="none";
+  document.getElementById("privacyModal").style.display="flex";
+}
+
+// WiFi 随机2.4G/5G
+document.getElementById("wifiBand").innerText = 
+  "WiFi 在线（" + (Math.random()>0.5 ? "5G" : "2.4G") + "）";
+
+function hideAll(){document.querySelectorAll(".box").forEach(x=>x.classList.remove("show"))}
+function showLogin(){hideAll();document.getElementById("loginPage").classList.add("show")}
+function showReg(){hideAll();document.getElementById("regPage").classList.add("show")}
+function showMain(){hideAll();document.getElementById("mainPage").classList.add("show")}
+function showUserCenter(){hideAll();document.getElementById("userCenterPage").classList.add("show")}
+function showContact(){hideAll();document.getElementById("contactPage").classList.add("show")}
+function showNotice(){hideAll();document.getElementById("noticePage").classList.add("show");loadNotice()}
+function showChat(){hideAll();document.getElementById("chatPage").classList.add("show");loadChat()}
+
+function agreePrivacy(){document.getElementById("privacyModal").style.display="none";showLogin();}
+function refusePrivacy(){window.close()}
+
+// 登录
+function userLogin(){
+  let a=document.getElementById("loginAccount").value.trim();
+  let p=document.getElementById("loginPwd").value.trim();
+  let users=get("users");
+  let u=users.find(x=>(x.user==a||x.phone==a)&&x.pwd==p);
+  if(!u)return alert("账号或密码错误");
+  currentUser=u;localStorage.setItem("currentUser",JSON.stringify(u));
+  document.getElementById("nickName").innerText=u.user;
+  document.getElementById("avatar").innerText=u.user.charAt(0);
+  showMain();
+}
+
+// 注册
+function userReg(){
+  let n=document.getElementById("regName").value.trim();
+  let p=document.getElementById("regPhone").value.trim();
+  let pw=document.getElementById("regPwd").value.trim();
+  let q=document.getElementById("regQues").value.trim();
+  let a=document.getElementById("regAnswer").value.trim();
+  if(!n||!p||!pw||!q||!a)return alert("请填写完整");
+  let list=get("regApply");
+  list.push({user:n,phone:p,pwd:pw,qa:q,ans:a,time:now()});
+  set("regApply",list);
+  alert("已提交审核，请等待通过");
+  showLogin();
+}
+
+// 注销
+function applyDeleteAccount(){
+  let txt=prompt("请输入：我确认注销，后果我自己自负");
+  if(txt!=="我确认注销，后果我自己自负")return alert("输入错误，无法注销");
+  alert("注销申请已提交，进入7天反悔期");
+}
+
+// 改名
+function changeName(){
+  let newName=prompt("请输入新名称");
+  if(!newName)return;
+  let list=get("nameApply");
+  list.push({user:currentUser.user,newName:newName,time:now()});
+  set("nameApply",list);
+  alert("已提交审核");
+}
+
+// 忘记密码
+function showForgetPwd(){
+  let name=prompt("请输入用户名");
+  if(!name)return;
+  let users=get("users");
+  let u=users.find(x=>x.user==name);
+  if(!u)return alert("用户不存在");
+  let ans=prompt("安全问题："+u.qa);
+  if(ans!==u.ans)return alert("答案错误");
+  let newPwd=prompt("请输入新密码");
+  if(!newPwd)return;
+  u.pwd=newPwd;set("users",users);
+  alert("密码重置成功");
+}
+
+// 聊天（双向互通）
+function loadChat(){
+  let chat=get("chat_"+currentUser.user);
+  let box=document.getElementById("chatBox");
+  box.innerHTML="";
+  chat.forEach(m=>{box.innerHTML+=`[${m.time}] ${m.from}：${m.text}\n`});
+  box.scrollTop=box.scrollHeight;
+}
+function sendChat(){
+  let t=document.getElementById("chatInput").value.trim();
+  if(!t)return;
+  let chat=get("chat_"+currentUser.user);
+  chat.push({from:"用户",text:t,time:now()});
+  set("chat_"+currentUser.user,chat);
+  document.getElementById("chatInput").value="";
+  loadChat();
+}
+
+// 公告
+function loadNotice(){
+  let notice=get("systemNotice");
+  document.getElementById("noticeContent").innerText=notice||"暂无公告";
+}
+
+// 更新
+function checkUpdate(){
+  let ver=get("version");
+  if(ver && ver!="V1.2026.1"){
+    alert("有新版本："+ver+"\n请联系管理员获取更新！");
+  }else{
+    alert("当前已是最新版本 V1.2026.1");
+  }
+}
+
+// 帮助
+function showLoginHelp(){alert("1.检查账号密码 2.忘记密码可通过安全问题找回 3.未审核请等待")}
+function showRegHelp(){alert("1.信息填写完整 2.手机号正确 3.提交后等待管理员审核")}
+function logout(){currentUser=null;localStorage.removeItem("currentUser");showLogin()}
+
+// 自动刷新聊天
+window.onload=function(){
+  let u=localStorage.getItem("currentUser");
+  if(u){currentUser=JSON.parse(u);showMain();document.getElementById("nickName").innerText=currentUser.user;document.getElementById("avatar").innerText=currentUser.user.charAt(0);}
+  setInterval(()=>{if(currentUser&&document.getElementById("chatPage").classList.contains("show"))loadChat()},1500);
+}
+</script>
+</body>
+</html>
